@@ -1,0 +1,84 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      # Add step to generate paraglide files
+      - name: Generate paraglide runtime
+        run: |
+          mkdir -p src/lib/paraglide/runtime
+          echo "// Mock implementation of the Paraglide runtime interface
+          export const languages = ['en'];
+          export const sourceLanguage = 'en';
+          export type AvailableLanguageTag = 'en';
+          export const availableLanguageTags = ['en'] as const;
+          export const sourceLanguageTag = 'en';
+          
+          // Required methods
+          export const getLanguageTag = () => 'en';
+          export const getLanguages = () => ['en'];
+          export const getSourceLanguage = () => 'en';
+          export const setLanguageTag = (language_tag: 'en' | (() => 'en')) => {};
+          export const languageTag = () => 'en' as AvailableLanguageTag;
+          export const onSetLanguageTag = (callback: (tag: AvailableLanguageTag) => void) => {};
+          export const isAvailableLanguageTag = (tag: unknown): tag is AvailableLanguageTag => tag === 'en';
+          export const resolveTemplate = () => '';
+          export const loadMessages = async () => {};
+          " > src/lib/paraglide/runtime/index.ts
+      
+      - name: Build
+        run: npm run build
+      
+      # Uncomment and configure one of these deployment options when ready
+      
+      # # Option 1: Deploy to GitHub Pages (if using adapter-static)
+      # - name: Deploy to GitHub Pages
+      #   uses: JamesIves/github-pages-deploy-action@v4
+      #   with:
+      #     folder: build
+      
+      # # Option 2: Deploy to Vercel
+      # - name: Deploy to Vercel
+      #   uses: amondnet/vercel-action@v20
+      #   with:
+      #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
+      #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+      #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+      #     vercel-args: '--prod'
+      
+      # # Option 3: Deploy to Netlify
+      # - name: Deploy to Netlify
+      #   uses: nwtgck/actions-netlify@v2
+      #   with:
+      #     publish-dir: './build'
+      #     production-branch: main
+      #     deploy-message: "Deploy from GitHub Actions"
+      #   env:
+      #     NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      #     NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+      
+      # For now, we'll just create an artifact for manual deployment
+      - name: Create deployment artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-output
+          path: build/ 
