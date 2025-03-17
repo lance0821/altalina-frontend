@@ -5,3 +5,33 @@
 @import '@skeletonlabs/skeleton/themes/cerberus';
 
 @source '../node_modules/@skeletonlabs/skeleton-svelte/dist';
+
+@theme {}
+
+/* Base HTML/Body styles */
+html {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  background-color: theme('colors.zinc.50');
+}
+
+.dark body {
+  background-color: theme('colors.black');
+}
+
+/* Define basic background color utilities */
+
+
+/* Custom layer for components */
+@layer components {}
+
+[data-theme='cerberus'] {
+  --spacing: 0.22rem;
+  --radius-container: 0.375rem;
+  --heading-font-weight: bolder;
+}
