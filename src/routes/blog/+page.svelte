@@ -1,7 +1,6 @@
 <!-- src/routes/blog/+page.svelte -->
 <script lang="ts">
-  import HeroSection from '$lib/components/HeroSection.svelte';
-  import BlogPostCard from '$lib/components/BlogPostCard.svelte';
+  import BlogPostCard from "$lib/components/BlogPostCard.svelte";
   import type { BlogPost, BlogIndex } from '$lib/types/blog';
   
   // Data from load function with proper type annotation
@@ -13,35 +12,67 @@
   };
   
   // Destructure for convenience
-  const { blogIndex, featuredPosts, trendingPosts, posts } = data;
+  const { blogIndex, posts } = data;
+  
+  // Debug function to check image data
+  function getImageUrl(post: BlogPost): string | undefined {
+    // Log the image structure for debugging
+    console.log('Post image data:', post.image);
+    
+    // Try different possible locations of the image URL
+    if (post.image?.medium?.url) return post.image.medium.url;
+    if (post.image?.thumbnail?.url) return post.image.thumbnail.url;
+    if (post.image?.small?.url) return post.image.small.url;
+    if (post.image?.large?.url) return post.image.large.url;
+    
+    // If the image is a string (direct URL)
+    if (typeof post.image === 'string') return post.image;
+    
+    // Fallback
+    return undefined;
+  }
 </script>
 
-<div class="container mx-auto px-4 py-12">
-  <!-- Blog header -->
-  <header class="mb-12 text-center">
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-4xl mx-auto">
     {#if blogIndex}
-      <h1 class="mb-4 text-4xl font-bold">{blogIndex.title}</h1>
+      <h1 class="text-3xl md:text-4xl font-bold mb-6">{blogIndex.title}</h1>
       {#if blogIndex.intro}
-        <div class="mx-auto max-w-2xl">{@html blogIndex.intro}</div>
+        <div class="text-xl text-surface-600 dark:text-surface-300 mb-12">
+          {@html blogIndex.intro}
+        </div>
+      {:else}
+        <p class="text-xl text-surface-600 dark:text-surface-300 mb-12">
+          The latest articles and tutorials on web development, design, and technology.
+        </p>
       {/if}
+    {:else}
+      <h1 class="text-3xl md:text-4xl font-bold mb-6">Blog</h1>
+      <p class="text-xl text-surface-600 dark:text-surface-300 mb-12">
+        The latest articles and tutorials on web development, design, and technology.
+      </p>
     {/if}
-  </header>
+  </div>
   
-  <!-- Hero section with featured and trending posts -->
-  <HeroSection {featuredPosts} {trendingPosts} />
-  
-  <!-- Regular blog posts -->
-  <section class="mt-16">
-    <h2 class="mb-6 text-2xl font-bold">Latest Articles</h2>
-    
-    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    {#if posts && posts.length > 0}
       {#each posts as post}
-        <!-- Don't repeat posts that were already shown as featured or trending -->
-        {#if !featuredPosts.some((p: BlogPost) => p.id === post.id) && 
-             !trendingPosts.some((p: BlogPost) => p.id === post.id)}
-          <BlogPostCard {post} />
-        {/if}
+        <BlogPostCard 
+          title={post.title}
+          excerpt={post.intro || ''}
+          date={post.date}
+          readingTime={post.read_time ? `${post.read_time} min read` : ''}
+          slug={post.slug}
+          tags={post.tags || []}
+          coverImage={getImageUrl(post)}
+        />
       {/each}
-    </div>
-  </section>
+    {:else}
+      <div class="col-span-3 py-12 text-center">
+        <p class="text-xl text-surface-600 dark:text-surface-300">
+          No blog posts found. Check back soon!
+        </p>
+      </div>
+    {/if}
+  </div>
 </div>

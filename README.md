@@ -1,6 +1,6 @@
 # Altalina Frontend
 
-This is the frontend application for Altalina, built with SvelteKit and integrated with a Wagtail CMS backend.
+This is the frontend application for Altalina, built with SvelteKit and Skeleton UI.
 
 ## Features
 
@@ -85,6 +85,69 @@ Once your feature is complete:
 npm run build
 # or
 pnpm build
+```
+
+## Storybook
+
+This project includes Storybook for component development and documentation. Storybook provides a sandbox to build UI components in isolation, making it easier to develop and test components without running the entire application.
+
+### Features of the Storybook Setup
+
+- **Theme Switching**: Test components across all Skeleton UI themes using the theme selector in the toolbar
+- **Responsive Testing**: Use the viewport addon to test components at different screen sizes
+- **Accessibility Testing**: Check components for accessibility issues with the a11y addon
+- **Component Documentation**: Auto-generated component documentation from JSDoc comments and stories
+
+### Running Storybook
+
+To start Storybook:
+
+```bash
+npm run storybook
+```
+
+This will launch Storybook on http://localhost:6006 (by default).
+
+### Building Storybook
+
+To build a static version of Storybook:
+
+```bash
+npm run build-storybook
+```
+
+The build output will be in the `storybook-static` directory.
+
+### Creating Stories
+
+To create a story for a component:
+
+1. Create a `.stories.ts` file next to your component or in a subdirectory
+2. Export a default object with metadata and component reference
+3. Export named constants representing each story variant
+
+Example:
+
+```typescript
+import MyComponent from './MyComponent.svelte';
+
+export default {
+  title: 'Components/MyComponent',
+  component: MyComponent,
+  tags: ['autodocs'],
+};
+
+export const Default = {
+  args: {
+    // component props here
+  }
+};
+
+export const Variant = {
+  args: {
+    // different props for a variant
+  }
+};
 ```
 
 ## License
