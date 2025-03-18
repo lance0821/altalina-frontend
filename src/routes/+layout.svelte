@@ -3,13 +3,13 @@
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import { onMount } from 'svelte';
+	import { initializeTheme } from '$lib/utils/theme';
 
 	// Set server/client flag - IMPORTANT: must be set before any conditional rendering
 	const isBrowser = typeof window !== 'undefined';
 	console.log(`+layout.svelte is running on ${isBrowser ? 'client' : 'server'}`);
 	
 	// Initialize app state with safe defaults
-	let isDarkMode = false;
 	let hydrated = false;
 
 	// Capture unhandled errors
@@ -32,25 +32,8 @@
 		hydrated = true;
 		console.log('Root layout hydrated on client');
 		
-		// Theme logic - only runs on client
-		const savedTheme = localStorage.getItem('theme');
-		
-		if (savedTheme) {
-			document.documentElement.setAttribute('data-theme', savedTheme);
-			isDarkMode = savedTheme === 'dark';
-		} else {
-			// Check system preference
-			const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-			document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
-			isDarkMode = prefersDark;
-		}
-		
-		// Apply dark mode class
-		if (isDarkMode) {
-			document.documentElement.classList.add('dark');
-		} else {
-			document.documentElement.classList.remove('dark');
-		}
+		// Initialize theme once (removed duplicate theme logic)
+		initializeTheme();
 		
 		// Monitor hydration errors
 		const originalConsoleError = console.error;
@@ -71,6 +54,8 @@
 	  }
 	});
 </script>
+
+
 
 <svelte:head>
 	<title>Spencer Sharp - Software designer, founder, and amateur astronaut</title>

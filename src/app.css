@@ -8,30 +8,19 @@
 
 @theme {}
 
+/* Add these after your imports in src/app.css */
+:root {
+  /* Define variables for header and layout */
+  --header-height: 4rem;
+  --header-mb: 0;
+  --header-position: sticky;
+  --header-inner-position: sticky;
+}
+
 /* Base HTML/Body styles */
-html {
-  height: 100%;
-}
 
-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-  background-color: theme('colors.zinc.50');
-}
-
-.dark body {
-  background-color: theme('colors.black');
-}
-
-/* Define basic background color utilities */
-
+/* Define basic background color utilities *
 
 /* Custom layer for components */
 @layer components {}
 
-[data-theme='cerberus'] {
-  --spacing: 0.22rem;
-  --radius-container: 0.375rem;
-  --heading-font-weight: bolder;
-}
